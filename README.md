@@ -2,7 +2,7 @@
 
 Bytescript is a learning and practice platform for competitive programming, data structures, and JavaScript development — with interactive visualizations, collaborative peer-programming, and an AI assistant to help you learn and solve problems faster.
 
-## Key Features (priority-ordered)
+## Key Features
 
 - **Competitive Programming Patterns:** Practice curated patterns and templates that most contest problems fall into. Each pattern includes explanations, common pitfalls, and typical problem variations.
 - **Problem Solving Questions:** A large catalog of practice problems with difficulty tags, editorial solutions, and testcases for hands-on solving.
