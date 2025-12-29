@@ -4,6 +4,7 @@ import { Code, Cpu, Database, Rocket, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
+import ChatDock from '@/components/chat/ChatDock';
 import Navbar from '@/components/common/Navbar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -287,6 +288,8 @@ export default function DataStructuresPage() {
               </div>
             </TabsContent>
           </Tabs>
+
+          <ChatDock />
         </div>
       </div>
     </AuthProvider>
