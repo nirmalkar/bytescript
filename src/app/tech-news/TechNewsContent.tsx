@@ -1,213 +1,161 @@
 'use client';
 
-import Image from 'next/image';
-import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useState } from 'react';
 
-interface Article {
-  id: number;
-  title: string;
-  description: string;
-  source: string;
-  publishedAt: string;
-  url: string;
-  imageUrl: string;
-}
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { useGetTechNewsQuery } from '@/store/slices/techNewsSlice';
 
 export default function TechNewsContent() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
 
-  useEffect(() => {
-    // TODO: Replace with actual API call
-    const fetchTechNews = async () => {
-      try {
-        setLoading(true);
-        // Placeholder data - will be replaced with API integration
-        const placeholderArticles = [
-          {
-            id: 1,
-            title: 'Breaking: New AI Model Achieves Breakthrough Performance',
-            description:
-              'Researchers announce a revolutionary AI model that outperforms existing systems in multiple benchmarks.',
-            source: 'TechCrunch',
-            publishedAt: new Date().toISOString(),
-            url: '#',
-            imageUrl: '/api/placeholder/400/250',
-          },
-          {
-            id: 2,
-            title: "JavaScript Framework Updates: What's New in 2024",
-            description:
-              'Major updates to popular JavaScript frameworks bring exciting new features for developers.',
-            source: 'Dev.to',
-            publishedAt: new Date().toISOString(),
-            url: '#',
-            imageUrl: '/api/placeholder/400/250',
-          },
-          {
-            id: 3,
-            title: 'Cloud Computing Trends: The Rise of Edge Computing',
-            description:
-              'Edge computing is transforming how we think about cloud infrastructure and application deployment.',
-            source: 'Cloud Native',
-            publishedAt: new Date().toISOString(),
-            url: '#',
-            imageUrl: '/api/placeholder/400/250',
-          },
-        ];
+  const {
+    data: newsData,
+    isLoading,
+    error,
+  } = useGetTechNewsQuery({ page, category: selectedCategory });
 
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        setArticles(placeholderArticles);
-      } catch (err) {
-        setError('Failed to fetch tech news');
-        console.error('Error fetching tech news:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTechNews();
-  }, []);
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="text-muted-foreground">Loading latest tech news...</p>
-        </div>
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="text-6xl">⚠️</div>
-          <h1 className="text-2xl font-bold text-foreground">
-            Error Loading News
-          </h1>
-          <p className="text-muted-foreground">{error}</p>
-        </div>
+      <div className="text-center py-10">
+        <h2 className="text-xl font-semibold text-red-600">
+          Error loading tech news
+        </h2>
+        <p className="text-gray-600 mt-2">Please try again later</p>
+      </div>
+    );
+  }
+
+  if (!newsData || newsData.articles.length === 0) {
+    return (
+      <div className="text-center py-10">
+        <h2 className="text-xl font-semibold">No tech news available</h2>
+        <p className="text-gray-600 mt-2">
+          Check back later for the latest updates
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">
-            TechPulse News
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            Stay updated with the latest technology news and trends
-          </p>
-        </div>
+    <div className="container mx-auto py-10">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-4">Tech News</h1>
 
-        {/* News Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {articles.map((article: Article) => (
-            <article
-              key={article.id}
-              className="bg-card rounded-lg border border-border shadow-sm hover:shadow-md transition-shadow duration-200"
+        {/* Category Filter */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          <Button
+            variant={selectedCategory === '' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setSelectedCategory('')}
+          >
+            All
+          </Button>
+          {newsData.categories.map((category) => (
+            <Button
+              key={category}
+              variant={selectedCategory === category ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setSelectedCategory(category)}
             >
-              {/* Article Image */}
-              <div className="aspect-video bg-muted rounded-t-lg overflow-hidden relative">
-                <Image
-                  src={article.imageUrl}
-                  alt={article.title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  onError={(e) => {
-                    // Fallback for broken images
-                    const target = e.target as HTMLImageElement;
-                    target.srcset = `https://picsum.photos/seed/${article.id}/400/250.jpg`;
-                  }}
-                />
-              </div>
-
-              {/* Article Content */}
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-primary">
-                    {article.source}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    {formatDate(article.publishedAt)}
-                  </span>
-                </div>
-
-                <h2 className="text-xl font-semibold text-foreground mb-2 line-clamp-2">
-                  <a
-                    href={article.url}
-                    className="hover:text-primary transition-colors duration-200"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {article.title}
-                  </a>
-                </h2>
-
-                <p className="text-muted-foreground line-clamp-3 mb-4">
-                  {article.description}
-                </p>
-
-                <a
-                  href={article.url}
-                  className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors duration-200"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Read more
-                  <svg
-                    className="ml-1 h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </a>
-              </div>
-            </article>
+              {category}
+            </Button>
           ))}
         </div>
-
-        {/* Empty State */}
-        {articles.length === 0 && !loading && !error && (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">📰</div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">
-              No articles available
-            </h3>
-            <p className="text-muted-foreground">
-              Check back later for the latest tech news.
-            </p>
-          </div>
-        )}
       </div>
+
+      {/* News Articles Grid */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {newsData.articles.map((article) => (
+          <Card key={article.id} className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-gray-500">
+                  {article.category}
+                </span>
+                <span className="text-sm text-gray-500">
+                  {article.readTime} min read
+                </span>
+              </div>
+              <CardTitle className="line-clamp-2">
+                <Link
+                  href={`/tech-news/${article.slug}`}
+                  className="hover:text-blue-600"
+                >
+                  {article.title}
+                </Link>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardDescription className="line-clamp-3 mb-4">
+                {article.excerpt}
+              </CardDescription>
+              <div className="flex items-center justify-between text-sm text-gray-500">
+                <span>By {article.author}</span>
+                <span>
+                  {new Date(article.publishedAt).toLocaleDateString()}
+                </span>
+              </div>
+              {article.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-3">
+                  {article.tags.slice(0, 3).map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                  {article.tags.length > 3 && (
+                    <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
+                      +{article.tags.length - 3}
+                    </span>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Pagination */}
+      {newsData.total > newsData.limit && (
+        <div className="flex justify-center items-center gap-2 mt-8">
+          <Button
+            variant="outline"
+            disabled={page === 1}
+            onClick={() => setPage(page - 1)}
+          >
+            Previous
+          </Button>
+          <span className="text-sm text-gray-600">
+            Page {page} of {Math.ceil(newsData.total / newsData.limit)}
+          </span>
+          <Button
+            variant="outline"
+            disabled={page >= Math.ceil(newsData.total / newsData.limit)}
+            onClick={() => setPage(page + 1)}
+          >
+            Next
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

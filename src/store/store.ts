@@ -13,6 +13,7 @@ import { patternsApi } from './slices/patternsSlice';
 import { practiceQuestionsApi } from './slices/practiceQuestionsSlice';
 import { practiceTopicsApi } from './slices/practiceTopicsSlice';
 import { problemsApi } from './slices/problemsSlice';
+import { techNewsApi } from './slices/techNewsSlice';
 import timerSlice from './slices/timerSlice';
 
 export const store = configureStore({
@@ -30,6 +31,7 @@ export const store = configureStore({
     [practiceTopicsApi.reducerPath]: practiceTopicsApi.reducer,
     [problemsApi.reducerPath]: problemsApi.reducer,
     [customTestsApi.reducerPath]: customTestsApi.reducer,
+    [techNewsApi.reducerPath]: techNewsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -48,7 +50,8 @@ export const store = configureStore({
       .concat(practiceQuestionsApi.middleware)
       .concat(practiceTopicsApi.middleware)
       .concat(problemsApi.middleware)
-      .concat(customTestsApi.middleware),
+      .concat(customTestsApi.middleware)
+      .concat(techNewsApi.middleware),
 });
 
 setupListeners(store.dispatch);
