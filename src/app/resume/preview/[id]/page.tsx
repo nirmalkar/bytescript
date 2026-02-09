@@ -677,8 +677,12 @@ export default function ResumePreviewPage() {
   const renderModernTemplate = (resumeData: any = resume) => {
     if (!resumeData) return null;
     return (
-      <div id="resume-content" className="max-w-4xl mx-auto bg-white shadow-lg">
-        <div className="flex">
+      <div
+        id="resume-content"
+        className="w-[210mm] min-h-[297mm] mx-auto bg-white shadow-lg"
+        style={{ aspectRatio: '210/297' }}
+      >
+        <div className="flex h-full">
           {/* Sidebar */}
           <div className="w-1/3 bg-gray-900 text-white p-8">
             <div className="mb-8">
@@ -944,7 +948,11 @@ export default function ResumePreviewPage() {
   const renderMinimalTemplate = (resumeData: any = resume) => {
     if (!resumeData) return null;
     return (
-      <div id="resume-content" className="max-w-4xl mx-auto p-8 bg-white">
+      <div
+        id="resume-content"
+        className="w-[210mm] min-h-[297mm] mx-auto p-8 bg-white"
+        style={{ aspectRatio: '210/297' }}
+      >
         {/* Minimal header */}
         <div className="border-b border-gray-300 pb-6 mb-8">
           <h1 className="text-3xl font-light text-gray-900">
@@ -1237,7 +1245,9 @@ export default function ResumePreviewPage() {
           </div>
 
           {/* Middle - Resume Preview */}
-          <div className="flex-1 print:pr-0 max-w-5xl">{renderTemplate()}</div>
+          <div className="flex-1 print:pr-0 overflow-auto bg-gray-100 p-4">
+            <div className="flex justify-center">{renderTemplate()}</div>
+          </div>
 
           {/* Right Sidebar - Download Options */}
           <div className="w-64 space-y-6 print:hidden">
