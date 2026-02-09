@@ -169,12 +169,14 @@ export default function ResumePreviewPage() {
     if (!editableResume) return null;
     return (
       <div className="space-y-6 print:hidden">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold mb-4">Edit Resume</h3>
+        <div className="bg-card rounded-lg shadow-md p-6 border border-border">
+          <h3 className="text-lg font-semibold mb-4 text-card-foreground">
+            Edit Resume
+          </h3>
 
           {/* Personal Information */}
           <div className="space-y-4">
-            <h4 className="font-medium text-gray-900 border-b pb-2">
+            <h4 className="font-medium text-foreground border-b border-border pb-2">
               Personal Information
             </h4>
             <div className="space-y-3">
@@ -263,8 +265,8 @@ export default function ResumePreviewPage() {
         </div>
 
         {/* Skills */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h4 className="font-medium text-gray-900 border-b pb-2 mb-4">
+        <div className="bg-card rounded-lg shadow-md p-6 border border-border">
+          <h4 className="font-medium text-foreground border-b border-border pb-2 mb-4">
             Skills
           </h4>
           <div className="space-y-3">
@@ -309,14 +311,16 @@ export default function ResumePreviewPage() {
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 text-sm">No skills added yet</p>
+              <p className="text-muted-foreground text-sm">
+                No skills added yet
+              </p>
             )}
           </div>
         </div>
 
         {/* Work Experience */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h4 className="font-medium text-gray-900 border-b pb-2 mb-4">
+        <div className="bg-card rounded-lg shadow-md p-6 border border-border">
+          <h4 className="font-medium text-foreground border-b border-border pb-2 mb-4">
             Work Experience
           </h4>
           <div className="space-y-4">
@@ -325,7 +329,7 @@ export default function ResumePreviewPage() {
               editableResume.workExperience.map((work: any, index: number) => (
                 <div
                   key={work.id}
-                  className="space-y-3 border-l-2 border-blue-200 pl-4"
+                  className="space-y-3 border-l-2 border-primary/30 pl-4"
                 >
                   <div className="grid grid-cols-2 gap-2">
                     <Input
@@ -395,7 +399,7 @@ export default function ResumePreviewPage() {
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 text-sm">
+              <p className="text-muted-foreground text-sm">
                 No work experience added yet
               </p>
             )}
@@ -403,8 +407,8 @@ export default function ResumePreviewPage() {
         </div>
 
         {/* Education */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h4 className="font-medium text-gray-900 border-b pb-2 mb-4">
+        <div className="bg-card rounded-lg shadow-md p-6 border border-border">
+          <h4 className="font-medium text-foreground border-b border-border pb-2 mb-4">
             Education
           </h4>
           <div className="space-y-4">
@@ -412,7 +416,7 @@ export default function ResumePreviewPage() {
               editableResume.education.map((edu: any, index: number) => (
                 <div
                   key={edu.id}
-                  className="space-y-3 border-l-2 border-green-200 pl-4"
+                  className="space-y-3 border-l-2 border-secondary/30 pl-4"
                 >
                   <div className="grid grid-cols-2 gap-2">
                     <Input
@@ -494,14 +498,16 @@ export default function ResumePreviewPage() {
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 text-sm">No education added yet</p>
+              <p className="text-muted-foreground text-sm">
+                No education added yet
+              </p>
             )}
           </div>
         </div>
 
         {/* Projects */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h4 className="font-medium text-gray-900 border-b pb-2 mb-4">
+        <div className="bg-card rounded-lg shadow-md p-6 border border-border">
+          <h4 className="font-medium text-foreground border-b border-border pb-2 mb-4">
             Projects
           </h4>
           <div className="space-y-4">
@@ -509,7 +515,7 @@ export default function ResumePreviewPage() {
               editableResume.projects.map((project: any, index: number) => (
                 <div
                   key={project.id}
-                  className="space-y-3 border-l-2 border-purple-200 pl-4"
+                  className="space-y-3 border-l-2 border-accent/30 pl-4"
                 >
                   <div className="grid grid-cols-2 gap-2">
                     <Input
@@ -567,7 +573,7 @@ export default function ResumePreviewPage() {
                     rows={3}
                   />
                   <div>
-                    <Label className="text-sm text-gray-600">
+                    <Label className="text-sm text-muted-foreground">
                       Technologies (comma-separated)
                     </Label>
                     <Input
@@ -591,14 +597,16 @@ export default function ResumePreviewPage() {
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 text-sm">No projects added yet</p>
+              <p className="text-muted-foreground text-sm">
+                No projects added yet
+              </p>
             )}
           </div>
         </div>
 
         {/* Certifications */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h4 className="font-medium text-gray-900 border-b pb-2 mb-4">
+        <div className="bg-card rounded-lg shadow-md p-6 border border-border">
+          <h4 className="font-medium text-foreground border-b border-border pb-2 mb-4">
             Certifications
           </h4>
           <div className="space-y-4">
@@ -607,7 +615,7 @@ export default function ResumePreviewPage() {
               editableResume.certifications.map((cert: any, index: number) => (
                 <div
                   key={cert.id}
-                  className="space-y-3 border-l-2 border-yellow-200 pl-4"
+                  className="space-y-3 border-l-2 border-warning/30 pl-4"
                 >
                   <div className="grid grid-cols-2 gap-2">
                     <Input
@@ -656,7 +664,7 @@ export default function ResumePreviewPage() {
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 text-sm">
+              <p className="text-muted-foreground text-sm">
                 No certifications added yet
               </p>
             )}
@@ -756,7 +764,7 @@ export default function ResumePreviewPage() {
           </div>
 
           {/* Main Content */}
-          <div className="w-2/3 p-8">
+          <div className="w-2/3 p-8 bg-white">
             {/* Experience */}
             {resumeData.workExperience &&
               resumeData.workExperience.length > 0 && (
@@ -915,7 +923,7 @@ export default function ResumePreviewPage() {
                                   cert.name
                                 )}
                               </h3>
-                              <p className="text-blue-600 font-medium">
+                              <p className="text-gray-700 font-medium">
                                 {cert.issuer}
                               </p>
                             </div>
@@ -1151,20 +1159,20 @@ export default function ResumePreviewPage() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="flex justify-center items-center min-h-screen bg-background">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   if (error || !resume) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center min-h-screen bg-background">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl font-bold text-foreground mb-4">
             Resume not found
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-muted-foreground mb-6">
             The resume you&apos;re looking for doesn&apos;t exist or has been
             removed.
           </p>
@@ -1177,7 +1185,7 @@ export default function ResumePreviewPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-background py-8">
       <div className="max-w-full mx-auto px-4">
         {/* Back Button */}
         <div className="mb-6">
@@ -1216,12 +1224,12 @@ export default function ResumePreviewPage() {
             </div>
 
             {/* Sticky Edit Button inside sidebar */}
-            <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4">
+            <div className="sticky bottom-0 bg-card border-t border-border p-4">
               <Button
                 onClick={() => setIsEditing(!isEditing)}
                 variant={isEditing ? 'outline' : 'default'}
                 size="lg"
-                className="w-full"
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 {isEditing ? 'Save Changes' : 'Enable Editing'}
               </Button>
@@ -1234,8 +1242,10 @@ export default function ResumePreviewPage() {
           {/* Right Sidebar - Download Options */}
           <div className="w-64 space-y-6 print:hidden">
             {/* Template Selector */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold mb-4">Template</h3>
+            <div className="bg-card rounded-lg shadow-md p-6 border border-border">
+              <h3 className="text-lg font-semibold mb-4 text-card-foreground">
+                Template
+              </h3>
               <Select
                 value={selectedTemplate}
                 onValueChange={handleTemplateChange}
@@ -1251,16 +1261,21 @@ export default function ResumePreviewPage() {
             </div>
 
             {/* Download Section */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold mb-4">Download</h3>
+            <div className="bg-card rounded-lg shadow-md p-6 border border-border">
+              <h3 className="text-lg font-semibold mb-4 text-card-foreground">
+                Download
+              </h3>
               <div className="space-y-3">
-                <Button onClick={handleDownloadPDF} className="w-full">
+                <Button
+                  onClick={handleDownloadPDF}
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                >
                   Download PDF
                 </Button>
                 <Button
                   onClick={handleDownloadDOCX}
                   variant="outline"
-                  className="w-full"
+                  className="w-full border-input bg-background hover:bg-accent hover:text-accent-foreground"
                 >
                   Download DOCX
                 </Button>

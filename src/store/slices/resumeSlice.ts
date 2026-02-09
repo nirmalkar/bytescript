@@ -1,163 +1,46 @@
 import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
+import {
+  collection,
+  doc,
+  getDocs,
+  getDoc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  orderBy,
+} from 'firebase/firestore';
 
+import { db } from '@/firebase/config';
 import type { Resume, ResumeTemplate } from '@/types/resume';
+import { toISOString } from '@/utils/timestamp';
 
-// Mock data for development
-const mockResumes: Resume[] = [
-  {
-    id: '1',
-    title: 'Software Developer Resume',
-    personalInfo: {
-      fullName: 'John Doe',
-      email: 'john.doe@example.com',
-      phone: '+1 (555) 123-4567',
-      location: 'San Francisco, CA',
-      website: 'https://johndoe.dev',
-      linkedin: 'https://linkedin.com/in/johndoe',
-      github: 'https://github.com/johndoe',
-      summary:
-        'Experienced software developer with 5+ years of expertise in full-stack development, cloud architecture, and team leadership. Passionate about building scalable solutions and mentoring junior developers.',
-    },
-    education: [
-      {
-        id: '1',
-        institution: 'University of California, Berkeley',
-        degree: 'Bachelor of Science',
-        field: 'Computer Science',
-        startDate: '2016-09',
-        endDate: '2020-05',
-        gpa: '3.8',
-        description:
-          'Graduated Magna Cum Laude with focus on Software Engineering and Data Structures',
-      },
-    ],
-    workExperience: [
-      {
-        id: '1',
-        company: 'Tech Corp',
-        position: 'Senior Software Engineer',
-        location: 'San Francisco, CA',
-        startDate: '2021-06',
-        endDate: '',
-        current: true,
-        description:
-          'Lead development of microservices architecture serving 1M+ users. Mentored team of 5 junior developers.',
-        achievements: [
-          'Reduced API response time by 40% through optimization',
-          'Implemented CI/CD pipeline reducing deployment time by 60%',
-          'Led migration to microservices architecture',
-        ],
-      },
-      {
-        id: '2',
-        company: 'StartupXYZ',
-        position: 'Software Engineer',
-        location: 'Austin, TX',
-        startDate: '2020-06',
-        endDate: '2021-05',
-        current: false,
-        description:
-          'Developed and maintained web applications using React, Node.js, and AWS. Collaborated with cross-functional teams.',
-        achievements: [
-          'Built real-time collaboration features used by 50K+ users',
-          'Improved application performance by 35%',
-          'Implemented automated testing reducing bugs by 45%',
-        ],
-      },
-    ],
-    projects: [
-      {
-        id: '1',
-        name: 'E-Commerce Platform',
-        description:
-          'Full-stack e-commerce solution with real-time inventory management and payment processing',
-        technologies: ['React', 'Node.js', 'MongoDB', 'Stripe', 'Docker'],
-        startDate: '2023-01',
-        url: 'https://ecommerce-demo.com',
-        highlights: [
-          'Processed $1M+ in transactions',
-          '99.9% uptime achieved',
-          'Featured in TechCrunch',
-        ],
-      },
-      {
-        id: '2',
-        name: 'Task Management App',
-        description:
-          'Collaborative task management tool with real-time updates and team analytics',
-        technologies: ['Vue.js', 'Firebase', 'Tailwind CSS', 'Chart.js'],
-        startDate: '2022-06',
-        highlights: [
-          '10K+ active users',
-          '4.8/5 user rating',
-          'Reduced team coordination time by 30%',
-        ],
-      },
-    ],
-    skills: [
-      {
-        id: '1',
-        name: 'JavaScript',
-        level: 'Expert',
-        category: 'Programming Languages',
-      },
-      {
-        id: '2',
-        name: 'React',
-        level: 'Expert',
-        category: 'Frontend Frameworks',
-      },
-      {
-        id: '3',
-        name: 'Node.js',
-        level: 'Advanced',
-        category: 'Backend Technologies',
-      },
-      {
-        id: '4',
-        name: 'AWS',
-        level: 'Advanced',
-        category: 'Cloud Platforms',
-      },
-    ],
-    certifications: [
-      {
-        id: '1',
-        name: 'AWS Certified Solutions Architect',
-        issuer: 'Amazon Web Services',
-        date: '2022-03',
-        url: 'https://aws.amazon.com/certification',
-      },
-      {
-        id: '2',
-        name: 'Google Cloud Professional',
-        issuer: 'Google Cloud',
-        date: '2021-11',
-        url: 'https://cloud.google.com/certification',
-      },
-    ],
-    template: 'modern',
-    createdAt: '2024-01-15T10:00:00.000Z',
-    updatedAt: '2024-01-20T15:30:00.000Z',
-  },
-];
+const RESUMES_COLLECTION = 'resumes';
+const TEMPLATES_COLLECTION = 'resumeTemplates';
 
-const mockTemplates: ResumeTemplate[] = [
-  {
-    id: '1',
-    name: 'Modern',
-    description: 'Clean and contemporary design with sidebar layout',
-    preview: '/templates/modern-preview.png',
-    category: 'modern',
-  },
-  {
-    id: '2',
-    name: 'Minimal',
-    description: 'Simple and clean design focusing on content',
-    preview: '/templates/minimal-preview.png',
-    category: 'minimal',
-  },
-];
+// Transform Firestore resume document to Resume type
+const transformResumeDoc = (doc: any): Resume => {
+  const data = doc.data();
+
+  return {
+    id: doc.id,
+    ...data,
+    createdAt: toISOString(data.createdAt),
+    updatedAt: toISOString(data.updatedAt),
+  } as Resume;
+};
+
+// Transform Firestore template document to ResumeTemplate type
+const transformTemplateDoc = (doc: any): ResumeTemplate => {
+  const data = doc.data();
+
+  return {
+    id: doc.id,
+    ...data,
+    createdAt: toISOString(data.createdAt),
+    updatedAt: toISOString(data.updatedAt),
+  } as ResumeTemplate;
+};
 
 export const resumeApi = createApi({
   reducerPath: 'resumeApi',
@@ -168,10 +51,16 @@ export const resumeApi = createApi({
     getResumes: builder.query<Resume[], void>({
       queryFn: async () => {
         try {
-          // Simulate API delay
-          await new Promise((resolve) => setTimeout(resolve, 500));
+          if (!db) {
+            throw new Error('Firestore not initialized');
+          }
 
-          return { data: mockResumes };
+          const q = query(
+            collection(db, RESUMES_COLLECTION),
+            orderBy('updatedAt', 'desc')
+          );
+          const querySnapshot = await getDocs(q);
+          return { data: querySnapshot.docs.map(transformResumeDoc) };
         } catch (error) {
           return { error: { status: 'CUSTOM_ERROR', error: error as Error } };
         }
@@ -183,16 +72,17 @@ export const resumeApi = createApi({
     getResume: builder.query<Resume | null, string>({
       queryFn: async (id) => {
         try {
-          // Simulate API delay
-          await new Promise((resolve) => setTimeout(resolve, 300));
-
-          const resume = mockResumes.find((resume) => resume.id === id);
-
-          if (!resume) {
-            return { data: null };
+          if (!db) {
+            throw new Error('Firestore not initialized');
           }
 
-          return { data: resume };
+          const docRef = doc(db, RESUMES_COLLECTION, id);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            return { data: transformResumeDoc(docSnap) };
+          }
+          return { data: null };
         } catch (error) {
           return { error: { status: 'CUSTOM_ERROR', error: error as Error } };
         }
@@ -205,48 +95,47 @@ export const resumeApi = createApi({
     saveResume: builder.mutation<Resume, Partial<Resume> & { id?: string }>({
       queryFn: async (resumeData) => {
         try {
-          // Simulate API delay
-          await new Promise((resolve) => setTimeout(resolve, 800));
+          if (!db) {
+            throw new Error('Firestore not initialized');
+          }
 
           if (resumeData.id) {
             // Update existing resume
-            const index = mockResumes.findIndex((r) => r.id === resumeData.id);
-            if (index !== -1) {
-              mockResumes[index] = {
-                ...mockResumes[index],
-                ...resumeData,
-                updatedAt: new Date().toISOString(),
-              } as Resume;
-            }
-          } else {
-            // Create new resume
-            const newResume: Resume = {
-              id: Date.now().toString(),
-              title: resumeData.title || 'New Resume',
-              personalInfo: resumeData.personalInfo || {
-                fullName: '',
-                email: '',
-                phone: '',
-                location: '',
-                summary: '',
-              },
-              education: resumeData.education || [],
-              workExperience: resumeData.workExperience || [],
-              projects: resumeData.projects || [],
-              skills: resumeData.skills || [],
-              certifications: resumeData.certifications || [],
-              template: resumeData.template || 'modern',
-              createdAt: new Date().toISOString(),
+            const docRef = doc(db, RESUMES_COLLECTION, resumeData.id);
+            const updateData = {
+              ...resumeData,
               updatedAt: new Date().toISOString(),
             };
-            mockResumes.push(newResume);
-          }
 
-          return {
-            data: resumeData.id
-              ? mockResumes.find((r) => r.id === resumeData.id)
-              : mockResumes[mockResumes.length - 1],
-          };
+            await updateDoc(docRef, updateData);
+
+            // Return updated resume
+            const updatedDocSnap = await getDoc(docRef);
+            if (updatedDocSnap.exists()) {
+              return { data: transformResumeDoc(updatedDocSnap) };
+            }
+            throw new Error('Failed to retrieve updated resume');
+          } else {
+            // Create new resume
+            const now = new Date().toISOString();
+            const newResumeData = {
+              ...resumeData,
+              createdAt: now,
+              updatedAt: now,
+            };
+
+            const docRef = await addDoc(
+              collection(db, RESUMES_COLLECTION),
+              newResumeData
+            );
+
+            // Return created resume
+            const newDocSnap = await getDoc(docRef);
+            if (newDocSnap.exists()) {
+              return { data: transformResumeDoc(newDocSnap) };
+            }
+            throw new Error('Failed to retrieve created resume');
+          }
         } catch (error) {
           return { error: { status: 'CUSTOM_ERROR', error: error as Error } };
         }
@@ -258,14 +147,12 @@ export const resumeApi = createApi({
     deleteResume: builder.mutation<string, string>({
       queryFn: async (id) => {
         try {
-          // Simulate API delay
-          await new Promise((resolve) => setTimeout(resolve, 400));
-
-          const index = mockResumes.findIndex((resume) => resume.id === id);
-          if (index !== -1) {
-            mockResumes.splice(index, 1);
+          if (!db) {
+            throw new Error('Firestore not initialized');
           }
 
+          const docRef = doc(db, RESUMES_COLLECTION, id);
+          await deleteDoc(docRef);
           return { data: id };
         } catch (error) {
           return { error: { status: 'CUSTOM_ERROR', error: error as Error } };
@@ -278,10 +165,14 @@ export const resumeApi = createApi({
     getTemplates: builder.query<ResumeTemplate[], void>({
       queryFn: async () => {
         try {
-          // Simulate API delay
-          await new Promise((resolve) => setTimeout(resolve, 300));
+          if (!db) {
+            throw new Error('Firestore not initialized');
+          }
 
-          return { data: mockTemplates };
+          const querySnapshot = await getDocs(
+            collection(db, TEMPLATES_COLLECTION)
+          );
+          return { data: querySnapshot.docs.map(transformTemplateDoc) };
         } catch (error) {
           return { error: { status: 'CUSTOM_ERROR', error: error as Error } };
         }
