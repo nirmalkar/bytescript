@@ -679,12 +679,15 @@ export default function ResumePreviewPage() {
     return (
       <div
         id="resume-content"
-        className="w-[210mm] min-h-[297mm] mx-auto bg-white shadow-lg"
-        style={{ aspectRatio: '210/297' }}
+        className="w-[210mm] bg-white shadow-lg"
+        style={{ minHeight: '297mm' }}
       >
-        <div className="flex h-full">
+        <div className="flex" style={{ minHeight: '297mm' }}>
           {/* Sidebar */}
-          <div className="w-1/3 bg-gray-900 text-white p-8">
+          <div
+            className="w-1/3 bg-gray-900 text-white p-8"
+            style={{ minHeight: '297mm' }}
+          >
             <div className="mb-8">
               <h1 className="text-2xl font-bold mb-2">
                 {resumeData.personalInfo.fullName}
@@ -772,14 +775,14 @@ export default function ResumePreviewPage() {
             {/* Experience */}
             {resumeData.workExperience &&
               resumeData.workExperience.length > 0 && (
-                <div className="mb-8">
+                <div className="mb-8 experience-section section-break">
                   <h2 className="text-xl font-bold text-gray-900 mb-4 border-b-2 border-gray-900 pb-2">
                     Professional Experience
                   </h2>
                   <div className="space-y-6">
                     {resumeData.workExperience.map(
                       (work: any, _index: number) => (
-                        <div key={work.id}>
+                        <div key={work.id} className="resume-entry">
                           <div className="flex justify-between items-start mb-2">
                             <div>
                               <h3 className="text-lg font-semibold text-gray-900">
@@ -810,13 +813,13 @@ export default function ResumePreviewPage() {
 
             {/* Education */}
             {resumeData.education && resumeData.education.length > 0 && (
-              <div className="mb-8">
+              <div className="mb-8 education-section section-break">
                 <h2 className="text-xl font-bold text-gray-900 mb-4 border-b-2 border-gray-900 pb-2">
                   Education
                 </h2>
                 <div className="space-y-4">
                   {resumeData.education.map((edu: any, _index: number) => (
-                    <div key={edu.id}>
+                    <div key={edu.id} className="resume-entry">
                       <div className="flex justify-between items-start mb-2">
                         <div>
                           <h3 className="text-lg font-semibold text-gray-900">
@@ -851,13 +854,13 @@ export default function ResumePreviewPage() {
 
             {/* Projects */}
             {resumeData.projects && resumeData.projects.length > 0 && (
-              <div className="mb-8">
+              <div className="mb-8 projects-section section-break">
                 <h2 className="text-xl font-bold text-gray-900 mb-4 border-b-2 border-gray-900 pb-2">
                   Projects
                 </h2>
                 <div className="space-y-4">
                   {resumeData.projects.map((project: any, _index: number) => (
-                    <div key={project.id}>
+                    <div key={project.id} className="resume-entry">
                       <div className="flex justify-between items-start mb-2">
                         <div>
                           <h3 className="text-lg font-semibold text-gray-900">
@@ -950,8 +953,8 @@ export default function ResumePreviewPage() {
     return (
       <div
         id="resume-content"
-        className="w-[210mm] min-h-[297mm] mx-auto p-8 bg-white"
-        style={{ aspectRatio: '210/297' }}
+        className="w-[210mm] bg-white p-8"
+        style={{ minHeight: '297mm' }}
       >
         {/* Minimal header */}
         <div className="border-b border-gray-300 pb-6 mb-8">
@@ -981,7 +984,7 @@ export default function ResumePreviewPage() {
                     (work: any, _index: number) => (
                       <div
                         key={work.id}
-                        className="border-l border-gray-300 pl-6"
+                        className="border-l border-gray-300 pl-6 resume-entry"
                       >
                         <div className="flex justify-between items-start mb-2">
                           <div>
@@ -1007,13 +1010,16 @@ export default function ResumePreviewPage() {
             )}
 
           {resumeData.education && resumeData.education.length > 0 && (
-            <div>
+            <div className="education-section section-break">
               <h2 className="text-lg font-light text-gray-900 mb-4 uppercase tracking-wide">
                 Education
               </h2>
               <div className="space-y-4">
                 {resumeData.education.map((edu: any, _index: number) => (
-                  <div key={edu.id} className="border-l border-gray-300 pl-6">
+                  <div
+                    key={edu.id}
+                    className="border-l border-gray-300 pl-6 resume-entry"
+                  >
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <h3 className="text-base font-medium text-gray-900">
@@ -1047,7 +1053,7 @@ export default function ResumePreviewPage() {
                 {resumeData.projects.map((project: any, _index: number) => (
                   <div
                     key={project.id}
-                    className="border-l border-gray-300 pl-6"
+                    className="border-l border-gray-300 pl-6 resume-entry"
                   >
                     <div className="flex justify-between items-start mb-2">
                       <div>
@@ -1330,6 +1336,25 @@ if (typeof window !== 'undefined') {
       /* Hide any elements with these classes */
       .print\\:hidden {
         display: none !important;
+      }
+      
+      /* Resume content takes full width */
+      #resume-content {
+        width: 210mm !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        page-break-inside: auto;
+      }
+      
+      /* Prevent page breaks inside individual resume entries */
+      .resume-entry {
+        page-break-inside: avoid;
+      }
+      
+      /* Allow page breaks between sections */
+      .section-break {
+        page-break-before: auto;
+        page-break-after: auto;
       }
     }
   `;
